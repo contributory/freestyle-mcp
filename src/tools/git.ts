@@ -14,11 +14,11 @@
  */
 
 import { z } from "npm:zod@4";
-import type { McpServer } from "npm:@modelcontextprotocol/server";
+import type { FastMCP } from "npm:fastmcp";
 import type { FreestyleClient } from "../freestyle.ts";
 import { err, ok } from "./helpers.ts";
 
-export function registerGitTools(server: McpServer, client: FreestyleClient): void {
+export function registerGitTools(server: FastMCP, client: FreestyleClient): void {
   // ---------------------------------------------------------------------------
   // Create a repository
   // ---------------------------------------------------------------------------

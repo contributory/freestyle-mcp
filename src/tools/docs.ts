@@ -7,12 +7,12 @@
  */
 
 import { z } from "npm:zod@4";
-import type { McpServer } from "npm:@modelcontextprotocol/server";
+import type { FastMCP } from "npm:fastmcp";
 import { err, ok } from "./helpers.ts";
 
 const DOCS_BASH_URL = "https://www.freestyle.sh/docs/bash";
 
-export function registerDocsTools(server: McpServer): void {
+export function registerDocsTools(server: FastMCP): void {
   server.registerTool(
     "docs_bash",
     {
