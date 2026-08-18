@@ -11,10 +11,7 @@
  * definitions. The server listens on http://localhost:3000, override with PORT.)
  */
 
-import {
-  McpServer,
-  WebStandardStreamableHTTPServerTransport,
-} from "npm:@modelcontextprotocol/server";
+import { FastMCP } from "npm:fastmcp";
 import { FreestyleClient } from "./src/freestyle.ts";
 import { registerVmTools } from "./src/tools/vms.ts";
 import { registerGitTools } from "./src/tools/git.ts";
@@ -43,7 +40,7 @@ const baseUrl = Deno.env.get("FREESTYLE_API_BASE") ?? undefined;
 
 const client = new FreestyleClient(apiKey, baseUrl);
 
-const server = new McpServer({
+const server = new FastMCP({
   name: "freestyle-mcp",
   version: "1.0.0",
 });
@@ -56,19 +53,13 @@ registerDocsTools(server);
 // Streamable HTTP transport
 // ---------------------------------------------------------------------------
 
-// Stateful mode: each client session gets a cryptographically random session
-// id, returned in the `Mcp-Session-Id` header of the initialize response.
-const transport = new WebStandardStreamableHTTPServerTransport({
-  sessionIdGenerator: () => crypto.randomUUID(),
-  // Return plain JSON responses for simple request/response calls instead of
-  // always opening an SSE stream — improves compatibility with MCP clients.
-  enableJsonResponse: true,
+await server.start({
+  transportType: "streamable-http",
+  sseEndpoint: "/sse",
+  endpoint: "/messages",
+  port,
 });
 
-await server.connect(transport);
-
 export default async (req: Request) => {
-  return await transport.handleRequest(req);
+  return await server.handleRequest(req);
 };
-
-// Deno.serve({ port }, (req) => transport.handleRequest(req));
