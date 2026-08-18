@@ -13,14 +13,12 @@ export function ok(data: unknown): {
   };
 }
 
-/** An error tool result. */
+/** An error result, returned as a normal (non-error) response. */
 export function err(error: unknown): {
   content: { type: "text"; text: string }[];
-  isError: true;
 } {
   const message = error instanceof Error ? error.message : String(error);
   return {
     content: [{ type: "text", text: `Error: ${message}` }],
-    isError: true,
   };
 }

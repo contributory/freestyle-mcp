@@ -62,37 +62,37 @@ npx mcp-remote http://localhost:3000
 
 | Tool                        | Description                                        |
 | --------------------------- | -------------------------------------------------- |
-| `freestyle_vm_create`       | Create a VM (name, baseImage, vcpu/mem/storage, snapshot) |
-| `freestyle_vm_list`         | List all VMs                                        |
-| `freestyle_vm_get`          | Get a VM's state and metadata                       |
-| `freestyle_vm_delete`       | Permanently delete a VM                             |
-| `freestyle_vm_exec`         | Run a shell command in a VM and wait for it         |
-| `freestyle_vm_start`        | Start a VM (optional idle timeout)                  |
-| `freestyle_vm_stop`         | Gracefully stop a VM                                |
-| `freestyle_vm_resize`       | Resize CPU / memory / root filesystem               |
-| `freestyle_vm_fork`         | Fork a VM from its current state                    |
-| `freestyle_vm_read_file`    | Read a file from a VM                               |
-| `freestyle_vm_write_file`   | Write a file to a VM                                |
+| `vm_create`       | Create a VM (name, baseImage, vcpu/mem/storage, snapshot) |
+| `vm_list`         | List all VMs                                        |
+| `vm_get`          | Get a VM's state and metadata                       |
+| `vm_delete`       | Permanently delete a VM                             |
+| `vm_exec`         | Run a shell command in a VM and wait for it         |
+| `vm_start`        | Start a VM (optional idle timeout)                  |
+| `vm_stop`         | Gracefully stop a VM                                |
+| `vm_resize`       | Resize CPU / memory / root filesystem               |
+| `vm_fork`         | Fork a VM from its current state                    |
+| `vm_read_file`    | Read a file from a VM                               |
+| `vm_write_file`   | Write a file to a VM                                |
 
 ### Git
 
 | Tool                          | Description                              |
 | ----------------------------- | ---------------------------------------- |
-| `freestyle_git_repo_create`   | Create a repo (optionally from a source) |
-| `freestyle_git_repo_list`     | List repos with pagination               |
-| `freestyle_git_repo_delete`   | Delete a repo permanently                |
-| `freestyle_git_contents_get`  | Get file/dir contents at a revision      |
-| `freestyle_git_commit_create` | Create a commit with file changes        |
-| `freestyle_git_branches_list` | List branches                            |
-| `freestyle_git_branch_create` | Create a branch from a SHA               |
-| `freestyle_git_commits_list`  | List commits                             |
-| `freestyle_git_search`        | Full-text search across a repo           |
+| `git_repo_create`   | Create a repo (optionally from a source) |
+| `git_repo_list`     | List repos with pagination               |
+| `git_repo_delete`   | Delete a repo permanently                |
+| `git_contents_get`  | Get file/dir contents at a revision      |
+| `git_commit_create` | Create a commit with file changes        |
+| `git_branches_list` | List branches                            |
+| `git_branch_create` | Create a branch from a SHA               |
+| `git_commits_list`  | List commits                             |
+| `git_search`        | Full-text search across a repo           |
 
 ### Docs
 
 | Tool                 | Description                                      |
 | -------------------- | ------------------------------------------------ |
-| `freestyle_docs_bash`| Run bash against the Freestyle docs filesystem   |
+| `docs_bash`| Run bash against the Freestyle docs filesystem   |
 
 ## Project layout
 
