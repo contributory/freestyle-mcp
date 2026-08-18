@@ -8,13 +8,14 @@
  *   FREESTYLE_API_KEY=your-api-key deno run --allow-net --allow-env --allow-import main.ts
  *
  * (--allow-import is only required because deno.json pulls in Val Town type
- * definitions. The server listens on http://localhost:3000, override with PORT.)
+ * definitions. `export default` is the Val Town HTTP entry point.)
+ *
+ * Stateless by design: val.town does not keep any process state between
+ * requests, so every request gets a fresh McpServer built by createMcpHandler's
+ * per-request factory — nothing is stored in memory between calls.
  */
 
-import {
-  McpServer,
-  WebStandardStreamableHTTPServerTransport,
-} from "npm:@modelcontextprotocol/server";
+import { createMcpHandler, McpServer } from "npm:@modelcontextprotocol/server";
 import { FreestyleClient } from "./src/freestyle.ts";
 import { registerVmTools } from "./src/tools/vms.ts";
 import { registerGitTools } from "./src/tools/git.ts";
@@ -34,41 +35,31 @@ if (!apiKey) {
   Deno.exit(1);
 }
 
-const port = Number(Deno.env.get("PORT") ?? 3000);
 const baseUrl = Deno.env.get("FREESTYLE_API_BASE") ?? undefined;
 
 // ---------------------------------------------------------------------------
 // MCP server + tools
 // ---------------------------------------------------------------------------
 
+// Freestyle REST client — created once at module scope and shared by every
+// per-request server instance (the factory only closes over it).
 const client = new FreestyleClient(apiKey, baseUrl);
 
-const server = new McpServer({
-  name: "freestyle-mcp",
-  version: "1.0.0",
+// Stateless Streamable HTTP handler. The factory runs once per HTTP request
+// and builds a fresh McpServer, so nothing is held in memory between requests.
+// This matches val.town's stateless execution model.
+const handler = createMcpHandler(() => {
+  const server = new McpServer({
+    name: "freestyle-mcp",
+    version: "1.0.0",
+  });
+
+  registerVmTools(server, client);
+  registerGitTools(server, client);
+  registerDocsTools(server);
+
+  return server;
 });
 
-registerVmTools(server, client);
-registerGitTools(server, client);
-registerDocsTools(server);
-
-// ---------------------------------------------------------------------------
-// Streamable HTTP transport
-// ---------------------------------------------------------------------------
-
-// Stateful mode: each client session gets a cryptographically random session
-// id, returned in the `Mcp-Session-Id` header of the initialize response.
-const transport = new WebStandardStreamableHTTPServerTransport({
-  sessionIdGenerator: () => crypto.randomUUID(),
-  // Return plain JSON responses for simple request/response calls instead of
-  // always opening an SSE stream — improves compatibility with MCP clients.
-  enableJsonResponse: true,
-});
-
-await server.connect(transport);
-
-export default async (req: Request) => {
-  return await transport.handleRequest(req);
-};
-
-// Deno.serve({ port }, (req) => transport.handleRequest(req));
+// Val Town HTTP entry point.
+export default handler.fetch;

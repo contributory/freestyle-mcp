@@ -2,5 +2,6 @@
 .vscode
 .cursorrules
 .DS_Store
+.gitignore
 node_modules
 vendor

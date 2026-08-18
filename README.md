@@ -15,16 +15,25 @@ Built with Deno and the official MCP TypeScript SDK
 
 ## Run
 
+`main.ts` exports a **stateless** Streamable HTTP handler that is meant to be
+deployed as a Val Town HTTP val (e.g. `https://freestyle.val.run`). Because
+val.town does not keep any process state between requests, every request builds
+a fresh `McpServer` via `createMcpHandler` — nothing is held in memory between
+calls, so the endpoint scales horizontally as-is.
+
 ```bash
 export FREESTYLE_API_KEY="your-api-key"
 deno run --allow-net --allow-env --allow-import main.ts
 ```
 
-The server listens on `http://localhost:3000`. Override the port with `PORT`:
-
-```bash
-PORT=8080 FREESTYLE_API_KEY="your-api-key" deno run --allow-net --allow-env --allow-import main.ts
-```
+> `main.ts` does not bind a port itself — `export default` is the Val Town HTTP
+> entry point. To serve it locally for testing, mount the default export with
+> `Deno.serve`:
+>
+> ```ts
+> import handler from "./main.ts";
+> Deno.serve({ port: 3000 }, (req) => handler(req));
+> ```
 
 > `--allow-import` is only needed because `deno.json` pulls in the Val Town
 > type definitions. Remove the `types` entry from `deno.json` if you don't need
@@ -32,28 +41,29 @@ PORT=8080 FREESTYLE_API_KEY="your-api-key" deno run --allow-net --allow-env --al
 
 ## Connect an MCP client
 
-The endpoint is `http://localhost:3000` (or your `PORT`). Configure it in any
-MCP client that supports the Streamable HTTP transport, for example in VS Code
-(`.vscode/mcp.json`):
+The endpoint is the deployed Val Town URL, e.g. `https://freestyle.val.run`.
+Configure it in any MCP client that supports the Streamable HTTP transport, for
+example in VS Code (`.vscode/mcp.json`):
 
 ```json
 {
   "servers": {
     "freestyle": {
       "type": "http",
-      "url": "http://localhost:3000",
-      "headers": {
-        "Authorization": "Bearer your-api-key"
-      }
+      "url": "https://freestyle.val.run"
     }
   }
 }
 ```
 
+The server reads its API key from the `FREESTYLE_API_KEY` environment variable
+(set on the Val Town deployment), so the client does not need to send an
+`Authorization` header.
+
 Or with `mcp-remote`:
 
 ```bash
-npx mcp-remote http://localhost:3000
+npx mcp-remote https://freestyle.val.run
 ```
 
 ## Tools

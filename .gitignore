@@ -1,2 +1,1 @@
-Nothing should be ignored since the changes only include source code files (.ts files) and no build artifacts, dependencies, or temporary files.
 .vt/state.json
