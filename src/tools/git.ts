@@ -23,7 +23,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // Create a repository
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_repo_create",
+    "git_repo_create",
     {
       title: "Create a Freestyle Git repository",
       description:
@@ -70,7 +70,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // List repositories
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_repo_list",
+    "git_repo_list",
     {
       title: "List Freestyle Git repositories",
       description: "List Freestyle Git repositories with pagination.",
@@ -103,7 +103,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // Delete a repository
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_repo_delete",
+    "git_repo_delete",
     {
       title: "Delete a Freestyle Git repository",
       description:
@@ -128,7 +128,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // Get repository contents
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_contents_get",
+    "git_contents_get",
     {
       title: "Get Freestyle Git repository contents",
       description:
@@ -164,7 +164,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // Create a commit
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_commit_create",
+    "git_commit_create",
     {
       title: "Create a commit in a Freestyle Git repository",
       description:
@@ -220,7 +220,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // List branches
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_branches_list",
+    "git_branches_list",
     {
       title: "List branches in a Freestyle Git repository",
       description: "List all branches in a Freestyle Git repository.",
@@ -244,7 +244,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // Create a branch
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_branch_create",
+    "git_branch_create",
     {
       title: "Create a branch in a Freestyle Git repository",
       description:
@@ -276,7 +276,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // List commits
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_commits_list",
+    "git_commits_list",
     {
       title: "List commits in a Freestyle Git repository",
       description: "List commits in a Freestyle Git repository with optional filtering.",
@@ -303,7 +303,7 @@ export function registerGitTools(server: McpServer, client: FreestyleClient): vo
   // Search a repository
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_git_search",
+    "git_search",
     {
       title: "Search a Freestyle Git repository",
       description:

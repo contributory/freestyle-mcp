@@ -67,6 +67,8 @@ const transport = new WebStandardStreamableHTTPServerTransport({
 
 await server.connect(transport);
 
-Deno.serve({ port }, (req) => transport.handleRequest(req));
+export default async (req: Request) => {
+  return await transport.handleRequest(req);
+};
 
-console.log(`Freestyle MCP server listening on http://localhost:${port}`);
+// Deno.serve({ port }, (req) => transport.handleRequest(req));

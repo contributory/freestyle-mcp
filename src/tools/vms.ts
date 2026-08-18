@@ -25,7 +25,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Create a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_create",
+    "vm_create",
     {
       title: "Create a Freestyle VM",
       description:
@@ -85,7 +85,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // List VMs
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_list",
+    "vm_list",
     {
       title: "List Freestyle VMs",
       description: "List all Freestyle VMs with their state and metadata.",
@@ -105,7 +105,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Get VM info
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_get",
+    "vm_get",
     {
       title: "Get Freestyle VM info",
       description: "Get the current state and metadata of a single Freestyle VM.",
@@ -129,7 +129,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Delete a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_delete",
+    "vm_delete",
     {
       title: "Delete a Freestyle VM",
       description:
@@ -155,7 +155,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Execute a command in a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_exec",
+    "vm_exec",
     {
       title: "Execute a command in a Freestyle VM",
       description:
@@ -193,7 +193,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Start a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_start",
+    "vm_start",
     {
       title: "Start a Freestyle VM",
       description:
@@ -232,7 +232,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Stop a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_stop",
+    "vm_stop",
     {
       title: "Stop a Freestyle VM",
       description:
@@ -257,7 +257,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Resize a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_resize",
+    "vm_resize",
     {
       title: "Resize a Freestyle VM",
       description:
@@ -304,7 +304,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Fork a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_fork",
+    "vm_fork",
     {
       title: "Fork a Freestyle VM",
       description:
@@ -346,7 +346,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Read a file from a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_read_file",
+    "vm_read_file",
     {
       title: "Read a file from a Freestyle VM",
       description: "Read the contents of a file inside a Freestyle VM.",
@@ -371,7 +371,7 @@ export function registerVmTools(server: McpServer, client: FreestyleClient): voi
   // Write a file to a VM
   // ---------------------------------------------------------------------------
   server.registerTool(
-    "freestyle_vm_write_file",
+    "vm_write_file",
     {
       title: "Write a file to a Freestyle VM",
       description: "Write text content to a file inside a Freestyle VM.",

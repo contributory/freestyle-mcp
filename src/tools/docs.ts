@@ -14,7 +14,7 @@ const DOCS_BASH_URL = "https://www.freestyle.sh/docs/bash";
 
 export function registerDocsTools(server: McpServer): void {
   server.registerTool(
-    "freestyle_docs_bash",
+    "docs_bash",
     {
       title: "Run a command against the Freestyle docs",
       description:
