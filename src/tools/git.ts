@@ -22,29 +22,25 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // Create a repository
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_repo_create",
+    "Create a new Freestyle Git repository, optionally from a source " +
+    "repository (e.g. a GitHub URL) to preserve its history.",
     {
-      title: "Create a Freestyle Git repository",
-      description:
-        "Create a new Freestyle Git repository, optionally from a source " +
-        "repository (e.g. a GitHub URL) to preserve its history.",
-      inputSchema: z.object({
-        name: z.string().optional().describe("Optional repository name."),
-        public: z
-          .boolean()
-          .optional()
-          .describe("Whether the repository is public (cloneable without auth)."),
-        defaultBranch: z.string().optional().describe("Default branch name, e.g. main."),
-        sourceUrl: z
-          .string()
-          .optional()
-          .describe("Source repository URL to fork from, e.g. https://github.com/owner/repo.git."),
-        sourceRev: z
-          .string()
-          .optional()
-          .describe("Revision (branch/tag/commit) of the source repository."),
-      }),
+      name: z.string().optional().describe("Optional repository name."),
+      public: z
+        .boolean()
+        .optional()
+        .describe("Whether the repository is public (cloneable without auth)."),
+      defaultBranch: z.string().optional().describe("Default branch name, e.g. main."),
+      sourceUrl: z
+        .string()
+        .optional()
+        .describe("Source repository URL to fork from, e.g. https://github.com/owner/repo.git."),
+      sourceRev: z
+        .string()
+        .optional()
+        .describe("Revision (branch/tag/commit) of the source repository."),
     },
     async (args) => {
       try {
@@ -69,23 +65,20 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // List repositories
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_repo_list",
+    "List Freestyle Git repositories with pagination.",
     {
-      title: "List Freestyle Git repositories",
-      description: "List Freestyle Git repositories with pagination.",
-      inputSchema: z.object({
-        limit: z
-          .number()
-          .int()
-          .positive()
-          .optional()
-          .describe("Maximum number of repositories to return (default 10)."),
-        cursor: z
-          .string()
-          .optional()
-          .describe("Pagination cursor returned by a previous list call."),
-      }),
+      limit: z
+        .number()
+        .int()
+        .positive()
+        .optional()
+        .describe("Maximum number of repositories to return (default 10)."),
+      cursor: z
+        .string()
+        .optional()
+        .describe("Pagination cursor returned by a previous list call."),
     },
     async ({ limit, cursor }) => {
       try {
@@ -102,15 +95,11 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // Delete a repository
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_repo_delete",
+    "Permanently delete a Freestyle Git repository and all of its Git data.",
     {
-      title: "Delete a Freestyle Git repository",
-      description:
-        "Permanently delete a Freestyle Git repository and all of its Git data.",
-      inputSchema: z.object({
-        repoId: z.string().describe("The id of the repository to delete."),
-      }),
+      repoId: z.string().describe("The id of the repository to delete."),
     },
     async ({ repoId }) => {
       try {
@@ -127,25 +116,21 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // Get repository contents
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_contents_get",
+    "Get the contents of a file or directory in a Freestyle Git repository " +
+    "at a given revision. File contents are base64-encoded; directory " +
+    "responses include nested entries.",
     {
-      title: "Get Freestyle Git repository contents",
-      description:
-        "Get the contents of a file or directory in a Freestyle Git repository " +
-        "at a given revision. File contents are base64-encoded; directory " +
-        "responses include nested entries.",
-      inputSchema: z.object({
-        repoId: z.string().describe("The id of the repository."),
-        path: z
-          .string()
-          .optional()
-          .describe("Path to the file or directory (empty string for root)."),
-        rev: z
-          .string()
-          .optional()
-          .describe("Revision (branch, tag or commit SHA). Defaults to HEAD."),
-      }),
+      repoId: z.string().describe("The id of the repository."),
+      path: z
+        .string()
+        .optional()
+        .describe("Path to the file or directory (empty string for root)."),
+      rev: z
+        .string()
+        .optional()
+        .describe("Revision (branch, tag or commit SHA). Defaults to HEAD."),
     },
     async ({ repoId, path, rev }) => {
       try {
@@ -163,40 +148,36 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // Create a commit
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_commit_create",
+    "Create a commit by writing file changes to a Freestyle Git repository. " +
+    "Files can be added, modified (text content) or deleted.",
     {
-      title: "Create a commit in a Freestyle Git repository",
-      description:
-        "Create a commit by writing file changes to a Freestyle Git repository. " +
-        "Files can be added, modified (text content) or deleted.",
-      inputSchema: z.object({
-        repoId: z.string().describe("The id of the repository."),
-        message: z.string().describe("Commit message."),
-        branch: z.string().optional().describe("Branch to commit to (defaults to the default branch)."),
-        files: z
-          .array(
-            z.object({
-              path: z.string().describe("File path within the repository."),
-              content: z
-                .string()
-                .optional()
-                .describe("Text content of the file (omit when deleting)."),
-              deleted: z
-                .boolean()
-                .optional()
-                .describe("Set true to delete the file."),
-            }),
-          )
-          .describe("File changes to include in the commit."),
-        author: z
-          .object({
-            name: z.string().optional(),
-            email: z.string().optional(),
-          })
-          .optional()
-          .describe("Optional commit author."),
-      }),
+      repoId: z.string().describe("The id of the repository."),
+      message: z.string().describe("Commit message."),
+      branch: z.string().optional().describe("Branch to commit to (defaults to the default branch)."),
+      files: z
+        .array(
+          z.object({
+            path: z.string().describe("File path within the repository."),
+            content: z
+              .string()
+              .optional()
+              .describe("Text content of the file (omit when deleting)."),
+            deleted: z
+              .boolean()
+              .optional()
+              .describe("Set true to delete the file."),
+          }),
+        )
+        .describe("File changes to include in the commit."),
+      author: z
+        .object({
+          name: z.string().optional(),
+          email: z.string().optional(),
+        })
+        .optional()
+        .describe("Optional commit author."),
     },
     async ({ repoId, message, branch, files, author }) => {
       try {
@@ -219,14 +200,11 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // List branches
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_branches_list",
+    "List all branches in a Freestyle Git repository.",
     {
-      title: "List branches in a Freestyle Git repository",
-      description: "List all branches in a Freestyle Git repository.",
-      inputSchema: z.object({
-        repoId: z.string().describe("The id of the repository."),
-      }),
+      repoId: z.string().describe("The id of the repository."),
     },
     async ({ repoId }) => {
       try {
@@ -243,21 +221,17 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // Create a branch
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_branch_create",
+    "Create a new branch in a Freestyle Git repository, optionally from a " +
+    "specific commit SHA (defaults to the default branch).",
     {
-      title: "Create a branch in a Freestyle Git repository",
-      description:
-        "Create a new branch in a Freestyle Git repository, optionally from a " +
-        "specific commit SHA (defaults to the default branch).",
-      inputSchema: z.object({
-        repoId: z.string().describe("The id of the repository."),
-        name: z.string().describe("Name of the branch to create, e.g. feature/new-flow."),
-        sha: z
-          .string()
-          .optional()
-          .describe("Optional commit SHA to branch from."),
-      }),
+      repoId: z.string().describe("The id of the repository."),
+      name: z.string().describe("Name of the branch to create, e.g. feature/new-flow."),
+      sha: z
+        .string()
+        .optional()
+        .describe("Optional commit SHA to branch from."),
     },
     async ({ repoId, name, sha }) => {
       try {
@@ -275,16 +249,13 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // List commits
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_commits_list",
+    "List commits in a Freestyle Git repository with optional filtering.",
     {
-      title: "List commits in a Freestyle Git repository",
-      description: "List commits in a Freestyle Git repository with optional filtering.",
-      inputSchema: z.object({
-        repoId: z.string().describe("The id of the repository."),
-        branch: z.string().optional().describe("Filter commits by branch."),
-        limit: z.number().int().positive().optional().describe("Maximum number of commits to return."),
-      }),
+      repoId: z.string().describe("The id of the repository."),
+      branch: z.string().optional().describe("Filter commits by branch."),
+      limit: z.number().int().positive().optional().describe("Maximum number of commits to return."),
     },
     async ({ repoId, branch, limit }) => {
       try {
@@ -302,31 +273,27 @@ export function registerGitTools(server: FastMCP, client: FreestyleClient): void
   // ---------------------------------------------------------------------------
   // Search a repository
   // ---------------------------------------------------------------------------
-  server.registerTool(
+  server.tool(
     "git_search",
+    "Full-text search across all files in a Freestyle Git repository, " +
+    "returning matching lines with context.",
     {
-      title: "Search a Freestyle Git repository",
-      description:
-        "Full-text search across all files in a Freestyle Git repository, " +
-        "returning matching lines with context.",
-      inputSchema: z.object({
-        repoId: z.string().describe("The id of the repository."),
-        query: z.string().describe("The text to search for in file contents."),
-        rev: z
-          .string()
-          .optional()
-          .describe("Revision (branch, tag or commit SHA) to search. Defaults to HEAD."),
-        pathPattern: z
-          .string()
-          .optional()
-          .describe("Glob pattern to filter file paths, e.g. *.ts or src/**."),
-        maxResults: z
-          .number()
-          .int()
-          .positive()
-          .optional()
-          .describe("Maximum number of matching files (default 100, max 1000)."),
-      }),
+      repoId: z.string().describe("The id of the repository."),
+      query: z.string().describe("The text to search for in file contents."),
+      rev: z
+        .string()
+        .optional()
+        .describe("Revision (branch, tag or commit SHA) to search. Defaults to HEAD."),
+      pathPattern: z
+        .string()
+        .optional()
+        .describe("Glob pattern to filter file paths, e.g. *.ts or src/**."),
+      maxResults: z
+        .number()
+        .int()
+        .positive()
+        .optional()
+        .describe("Maximum number of matching files (default 100, max 1000)."),
     },
     async ({ repoId, query, rev, pathPattern, maxResults }) => {
       try {
