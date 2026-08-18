@@ -16,45 +16,49 @@
  */
 
 import { z } from "npm:zod@4";
-import type { FastMCP } from "npm:fastmcp";
+import type { McpServer } from "npm:@modelcontextprotocol/server";
 import type { FreestyleClient } from "../freestyle.ts";
 import { err, ok } from "./helpers.ts";
 
-export function registerVmTools(server: FastMCP, client: FreestyleClient): void {
+export function registerVmTools(server: McpServer, client: FreestyleClient): void {
   // ---------------------------------------------------------------------------
   // Create a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_create",
-    "Create a new Freestyle Linux VM. VMs start with 4 vCPU, 8 GB RAM and a " +
-    "20 GB root filesystem by default; pass template options to size it. " +
-    "Returns the VM id, domains and state.",
     {
-      name: z.string().optional().describe("Optional human-readable name for the VM."),
-      baseImage: z
-        .string()
-        .optional()
-        .describe("Base image to boot from (e.g. a Docker image reference)."),
-      vcpuCount: z
-        .number()
-        .int()
-        .positive()
-        .optional()
-        .describe("Number of vCPUs (must be a power of two)."),
-      memSizeGb: z
-        .number()
-        .positive()
-        .optional()
-        .describe("Memory in GB (must be a power of two)."),
-      rootfsSizeGb: z
-        .number()
-        .positive()
-        .optional()
-        .describe("Root filesystem size in GB."),
-      snapshotId: z
-        .string()
-        .optional()
-        .describe("Create the VM from an existing snapshot id."),
+      title: "Create a Freestyle VM",
+      description:
+        "Create a new Freestyle Linux VM. VMs start with 4 vCPU, 8 GB RAM and a " +
+        "20 GB root filesystem by default; pass template options to size it. " +
+        "Returns the VM id, domains and state.",
+      inputSchema: z.object({
+        name: z.string().optional().describe("Optional human-readable name for the VM."),
+        baseImage: z
+          .string()
+          .optional()
+          .describe("Base image to boot from (e.g. a Docker image reference)."),
+        vcpuCount: z
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .describe("Number of vCPUs (must be a power of two)."),
+        memSizeGb: z
+          .number()
+          .positive()
+          .optional()
+          .describe("Memory in GB (must be a power of two)."),
+        rootfsSizeGb: z
+          .number()
+          .positive()
+          .optional()
+          .describe("Root filesystem size in GB."),
+        snapshotId: z
+          .string()
+          .optional()
+          .describe("Create the VM from an existing snapshot id."),
+      }),
     },
     async (args) => {
       try {
@@ -80,10 +84,13 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // List VMs
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_list",
-    "List all Freestyle VMs with their state and metadata.",
-    {},
+    {
+      title: "List Freestyle VMs",
+      description: "List all Freestyle VMs with their state and metadata.",
+      inputSchema: z.object({}),
+    },
     async () => {
       try {
         const result = await client.get("/v1/vms");
@@ -97,11 +104,14 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Get VM info
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_get",
-    "Get the current state and metadata of a single Freestyle VM.",
     {
-      vmId: z.string().describe("The id of the VM."),
+      title: "Get Freestyle VM info",
+      description: "Get the current state and metadata of a single Freestyle VM.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM."),
+      }),
     },
     async ({ vmId }) => {
       try {
@@ -118,12 +128,16 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Delete a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_delete",
-    "Permanently delete a Freestyle VM. Keep source code and important state " +
-    "in Freestyle Git or another durable system before deleting.",
     {
-      vmId: z.string().describe("The id of the VM to delete."),
+      title: "Delete a Freestyle VM",
+      description:
+        "Permanently delete a Freestyle VM. Keep source code and important state " +
+        "in Freestyle Git or another durable system before deleting.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM to delete."),
+      }),
     },
     async ({ vmId }) => {
       try {
@@ -140,19 +154,23 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Execute a command in a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_exec",
-    "Run a shell command inside a Freestyle VM and wait for it to complete. " +
-    "Returns stdout, stderr and the exit status code.",
     {
-      vmId: z.string().describe("The id of the VM to run the command in."),
-      command: z.string().describe("The shell command to execute."),
-      timeoutMs: z
-        .number()
-        .int()
-        .positive()
-        .optional()
-        .describe("Optional timeout in milliseconds."),
+      title: "Execute a command in a Freestyle VM",
+      description:
+        "Run a shell command inside a Freestyle VM and wait for it to complete. " +
+        "Returns stdout, stderr and the exit status code.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM to run the command in."),
+        command: z.string().describe("The shell command to execute."),
+        timeoutMs: z
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .describe("Optional timeout in milliseconds."),
+      }),
     },
     async ({ vmId, command, timeoutMs }) => {
       try {
@@ -174,22 +192,26 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Start a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_start",
-    "Start a stopped Freestyle VM. Optionally configure an idle timeout so " +
-    "Freestyle reclaims the VM when it has no network activity.",
     {
-      vmId: z.string().describe("The id of the VM to start."),
-      idleTimeoutSeconds: z
-        .number()
-        .int()
-        .positive()
-        .nullable()
-        .optional()
-        .describe(
-          "Idle timeout in seconds. Set to null for workloads that should stay " +
-          "running until stopped or deleted.",
-        ),
+      title: "Start a Freestyle VM",
+      description:
+        "Start a stopped Freestyle VM. Optionally configure an idle timeout so " +
+        "Freestyle reclaims the VM when it has no network activity.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM to start."),
+        idleTimeoutSeconds: z
+          .number()
+          .int()
+          .positive()
+          .nullable()
+          .optional()
+          .describe(
+            "Idle timeout in seconds. Set to null for workloads that should stay " +
+            "running until stopped or deleted.",
+          ),
+      }),
     },
     async ({ vmId, idleTimeoutSeconds }) => {
       try {
@@ -209,11 +231,15 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Stop a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_stop",
-    "Gracefully stop a Freestyle VM. Disk state is preserved but memory is not.",
     {
-      vmId: z.string().describe("The id of the VM to stop."),
+      title: "Stop a Freestyle VM",
+      description:
+        "Gracefully stop a Freestyle VM. Disk state is preserved but memory is not.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM to stop."),
+      }),
     },
     async ({ vmId }) => {
       try {
@@ -230,28 +256,32 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Resize a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_resize",
-    "Resize a Freestyle VM's CPU, memory and/or root filesystem. cpu and memory " +
-    "must be powers of two; storage can grow but cannot shrink.",
     {
-      vmId: z.string().describe("The id of the VM to resize."),
-      cpu: z
-        .number()
-        .int()
-        .positive()
-        .optional()
-        .describe("Number of vCPUs (power of two)."),
-      memory: z
-        .number()
-        .positive()
-        .optional()
-        .describe("Memory in GB (power of two)."),
-      storage: z
-        .number()
-        .positive()
-        .optional()
-        .describe("Root filesystem size in GB (can only grow)."),
+      title: "Resize a Freestyle VM",
+      description:
+        "Resize a Freestyle VM's CPU, memory and/or root filesystem. cpu and memory " +
+        "must be powers of two; storage can grow but cannot shrink.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM to resize."),
+        cpu: z
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .describe("Number of vCPUs (power of two)."),
+        memory: z
+          .number()
+          .positive()
+          .optional()
+          .describe("Memory in GB (power of two)."),
+        storage: z
+          .number()
+          .positive()
+          .optional()
+          .describe("Root filesystem size in GB (can only grow)."),
+      }),
     },
     async ({ vmId, cpu, memory, storage }) => {
       try {
@@ -273,24 +303,28 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Fork a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_fork",
-    "Fork a Freestyle VM from its current running state, e.g. to explore " +
-    "multiple branches of work in parallel.",
     {
-      vmId: z.string().describe("The id of the VM to fork."),
-      count: z
-        .number()
-        .int()
-        .positive()
-        .optional()
-        .describe("Number of forks to create."),
-      persistence: z
-        .object({
-          type: z.enum(["ephemeral", "persistent"]).optional(),
-        })
-        .optional()
-        .describe("Fork persistence configuration."),
+      title: "Fork a Freestyle VM",
+      description:
+        "Fork a Freestyle VM from its current running state, e.g. to explore " +
+        "multiple branches of work in parallel.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM to fork."),
+        count: z
+          .number()
+          .int()
+          .positive()
+          .optional()
+          .describe("Number of forks to create."),
+        persistence: z
+          .object({
+            type: z.enum(["ephemeral", "persistent"]).optional(),
+          })
+          .optional()
+          .describe("Fork persistence configuration."),
+      }),
     },
     async ({ vmId, count, persistence }) => {
       try {
@@ -311,12 +345,15 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Read a file from a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_read_file",
-    "Read the contents of a file inside a Freestyle VM.",
     {
-      vmId: z.string().describe("The id of the VM."),
-      filepath: z.string().describe("Absolute path of the file to read, e.g. /tmp/hello.txt."),
+      title: "Read a file from a Freestyle VM",
+      description: "Read the contents of a file inside a Freestyle VM.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM."),
+        filepath: z.string().describe("Absolute path of the file to read, e.g. /tmp/hello.txt."),
+      }),
     },
     async ({ vmId, filepath }) => {
       try {
@@ -333,13 +370,16 @@ export function registerVmTools(server: FastMCP, client: FreestyleClient): void 
   // ---------------------------------------------------------------------------
   // Write a file to a VM
   // ---------------------------------------------------------------------------
-  server.tool(
+  server.registerTool(
     "vm_write_file",
-    "Write text content to a file inside a Freestyle VM.",
     {
-      vmId: z.string().describe("The id of the VM."),
-      filepath: z.string().describe("Absolute path of the file to write, e.g. /tmp/hello.txt."),
-      content: z.string().describe("The text content to write."),
+      title: "Write a file to a Freestyle VM",
+      description: "Write text content to a file inside a Freestyle VM.",
+      inputSchema: z.object({
+        vmId: z.string().describe("The id of the VM."),
+        filepath: z.string().describe("Absolute path of the file to write, e.g. /tmp/hello.txt."),
+        content: z.string().describe("The text content to write."),
+      }),
     },
     async ({ vmId, filepath, content }) => {
       try {
